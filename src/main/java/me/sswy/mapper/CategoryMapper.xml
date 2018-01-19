@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.sswy.mapper.CategoryMapper">
+<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+	<!--一对多：查询相关联子类目 -->
+	<resultMap type="me.sswy.domain.Category" id="fullCategory">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="mark" property="mark" />
+		<collection property="childcategorys" ofType="me.sswy.domain.Childcategory" 
+		select="me.sswy.mapper.ChildcategoryMapper.findChildcategoryByCid" column="id"/>
+	</resultMap>
+
+	<select id="categoryList" resultMap="fullCategory">
+		SELECT id,name,mark FROM category
+	</select>
+
+	<select id="findCategoryByMark" parameterType="java.lang.String"
+		resultMap="fullCategory">
+		SELECT id,name,mark FROM category WHERE mark=#{0}
+	</select>
+	
+	<select id="findCategoryByid" parameterType="java.lang.String" resultMap="fullCategory">
+		SELECT id,name,mark FROM category WHERE id=#{0}
+	</select>
+	
+</mapper>

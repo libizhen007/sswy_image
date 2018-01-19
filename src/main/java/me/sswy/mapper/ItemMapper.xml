@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.sswy.mapper.ItemMapper">
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+	<resultMap type="me.sswy.domain.Item" id="fullItem">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="cover" property="cover"/>
+		<result column="hierarchy" property="hierarchy"/>
+		<result column="download" property="download"/>
+		<result column="addr" property="addr"/>
+		<result column="time" property="time"/>
+		<collection property="childcategory" ofType="me.sswy.domain.childcategory"
+			select="me.sswy.mapper.ChildcategoryMapper.findChildcategoryByid" column="ccid"/>
+	</resultMap>
+	
+	<select id="findItemByCcid" resultMap="fullItem" parameterType="java.lang.String">
+		SELECT * FROM item WHERE ccid=#{value} ORDER BY TIME DESC LIMIT 0,12
+	</select>
+	<select id="getIndexItem" resultMap="fullItem">
+		SELECT * FROM item  ORDER BY TIME DESC LIMIT 0,12
+	</select>
+	<select id="findItemByMultiple" resultMap="fullItem" parameterType="java.lang.String">
+		SELECT * FROM item  WHERE addr=#{0} AND ccid=#{1} ORDER BY TIME DESC LIMIT 0,12
+	</select>
+	
+	<select id="getItemsByMarkAndPage" resultMap="fullItem" parameterType="me.sswy.domain.Condition">
+		SELECT * FROM item WHERE ccid=#{ccid} ORDER BY TIME DESC LIMIT #{itemStartNum},12
+	</select>
+	
+	<select id="getItemCountByCcid" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT COUNT(id) FROM item WHERE ccid=#{0}
+	</select>
+	
+	
+</mapper>

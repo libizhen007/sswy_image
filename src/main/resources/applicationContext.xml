@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:websocket="http://www.springframework.org/schema/websocket"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+                           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd  
+                           http://www.springframework.org/schema/context  
+                           http://www.springframework.org/schema/context/spring-context-3.2.xsd  
+                           http://www.springframework.org/schema/websocket   
+                           http://www.springframework.org/schema/websocket/spring-websocket.xsd
+                           http://www.springframework.org/schema/mvc
+						   http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+						   http://www.springframework.org/schema/aop 
+						   http://www.springframework.org/schema/aop/spring-aop-4.1.xsd"
+	default-lazy-init="true">
+
+
+	<!--springMVC start -->
+	<context:component-scan base-package="me.sswy.controller" />
+	<context:component-scan base-package="me.sswy.service.imp" />
+	<bean
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" />
+	<bean
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" />
+
+
+
+
+	<!--mybatis start -->
+	<!--配置连接池 -->
+	<bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="jdbcUrl"
+			value="jdbc:mysql://localhost:3306/haizhan?useUnicode=true&amp;characterEncoding=UTF-8" />
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="user" value="root" />
+		<property name="password" value="31129772" />
+		<property name="acquireIncrement" value="3" />
+		<property name="initialPoolSize" value="10" />
+		<property name="minPoolSize" value="2" />
+		<property name="maxPoolSize" value="500" />
+		<!--每18000秒检查所有连接池中的空闲连接  -->
+		<property name="idleConnectionTestPeriod" value="18000"/>  
+		<!-- 最大空闲时间,1800秒内未使用则连接被丢弃。若为0则永不丢弃 -->
+		<property name="maxIdleTime"  value="1800"></property>
+	</bean>
+	<bean name="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:SqlMapConfig.xml" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="me.sswy.mapper" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+	
+	<!--mybatis end -->
+	
+	<mvc:resources location="/css/" mapping="/css/**"/>
+	<mvc:resources location="/img/" mapping="/img/**"/>
+	<mvc:resources location="/js/" mapping="/js/**"/>
+	
+	<!-- interceptor -->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<mvc:exclude-mapping path="/**/*.js"/>
+			<mvc:exclude-mapping path="/**/*.jpg"/>
+			<mvc:exclude-mapping path="/**/*.png"/>
+			<mvc:exclude-mapping path="/**/*.gif"/>
+			<mvc:exclude-mapping path="/**/*.css"/>
+			
+			<bean class="me.sswy.interceptor.MainInterceptor"/>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+</beans>

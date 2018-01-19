@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.sswy.mapper.NewsMapper">
+	<cache type="org.mybatis.caches.ehcache.EhcacheCache"/>
+	<select id="findTimeNews" resultType="me.sswy.domain.News">
+		SELECT * FROM news
+	</select>
+	
+	<select id="findNewsById" parameterType="java.lang.Integer" resultType="me.sswy.domain.News">
+		SELECT * FROM news WHERE id=#{0}
+	</select>
+</mapper>
